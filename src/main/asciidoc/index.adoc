@@ -1,0 +1,10 @@
+= IxorTalk Image Service
+:doctype: book
+:icons: font
+:toc: left
+:toclevels: 4
+:sectlinks:
+:source-highlighter: highlightjs
+
+
+

@@ -21,24 +21,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.ixortalk.image.service;
+package com.ixortalk.image.service.config;
 
-import com.ixortalk.image.service.config.IxorTalkConfigProperties;
-import io.prometheus.client.spring.boot.EnablePrometheusEndpoint;
-import io.prometheus.client.spring.boot.EnableSpringBootMetricsCollector;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@SpringBootApplication
-@EnableGlobalMethodSecurity(prePostEnabled = true)
-@EnablePrometheusEndpoint
-@EnableSpringBootMetricsCollector
-@EnableConfigurationProperties(IxorTalkConfigProperties.class)
-public class ImageServiceApplication {
+@ConfigurationProperties(prefix = "ixortalk.image-service")
+public class IxorTalkConfigProperties {
 
-    public static void main(String[] args) {
-        SpringApplication.run(ImageServiceApplication.class, args);
+    private String bucket;
+
+    public String getBucket() {
+        return bucket;
+    }
+
+    public void setBucket(String bucket) {
+        this.bucket = bucket;
     }
 }

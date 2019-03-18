@@ -21,24 +21,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.ixortalk.image.service;
+package com.ixortalk.image.service.config;
 
-import com.ixortalk.image.service.config.IxorTalkConfigProperties;
-import io.prometheus.client.spring.boot.EnablePrometheusEndpoint;
-import io.prometheus.client.spring.boot.EnableSpringBootMetricsCollector;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
+import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 
-@SpringBootApplication
-@EnableGlobalMethodSecurity(prePostEnabled = true)
-@EnablePrometheusEndpoint
-@EnableSpringBootMetricsCollector
-@EnableConfigurationProperties(IxorTalkConfigProperties.class)
-public class ImageServiceApplication {
+@Configuration
+@EnableResourceServer
+public class ResourceServer extends ResourceServerConfigurerAdapter {
 
-    public static void main(String[] args) {
-        SpringApplication.run(ImageServiceApplication.class, args);
+    @Override
+    public void configure(HttpSecurity http) throws Exception {
+        http
+                .authorizeRequests()
+                .anyRequest().authenticated();
     }
 }

@@ -6,5 +6,32 @@
 :sectlinks:
 :source-highlighter: highlightjs
 
+= Image Service
+
+== Upload
+
+Uploading images
+
+=== Request
+
+Via curl:
+include::{snippets}/images/upload/curl-request.adoc[]
+
+HTTP request:
+include::{snippets}/images/upload/http-request.adoc[]
+
+==== Request Headers
+include::{snippets}/images/upload/request-headers.adoc[]
+
+==== Request Parts
+include::{snippets}/images/upload/request-parts.adoc[]
+
+=== Response
+include::{snippets}/images/upload/http-response.adoc[]
+
+==== Response Headers
+include::{snippets}/images/upload/response-headers.adoc[]
+
+
 
 

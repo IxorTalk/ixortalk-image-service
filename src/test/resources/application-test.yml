@@ -24,3 +24,15 @@
 
 server:
   context-path: /image-service
+
+ixortalk:
+  image-service:
+    bucket: configured-image-bucket
+
+logging:
+  org:
+    springframework:
+      security: DEBUG
+
+security:
+  ignored: "/css/**, /js/**, /webjars/**, /**/favicon.ico"

@@ -23,6 +23,11 @@
  */
 package com.ixortalk.image.service;
 
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.AnonymousAWSCredentials;
+import com.amazonaws.client.builder.AwsClientBuilder;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ixortalk.aws.s3.library.config.AwsS3Template;
@@ -30,6 +35,8 @@ import com.ixortalk.image.service.config.IxorTalkConfigProperties;
 import com.ixortalk.test.oauth2.OAuth2EmbeddedTestServer;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
+import io.findify.s3mock.S3Mock;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.runner.RunWith;
@@ -83,6 +90,10 @@ public abstract class AbstractSpringIntegrationTest {
     @MockBean
     protected AwsS3Template awsS3Template;
 
+    public S3Mock s3Mock;
+    public int s3MockPort = 10901;
+    public AmazonS3 s3Client;
+
     @Before
     public final void setupRestAssuredAndOrganizationMocking() {
         RestAssured.port = port;
@@ -95,6 +106,26 @@ public abstract class AbstractSpringIntegrationTest {
                         .addHeader(X_FORWARDED_HOST_HEADER, HOST_IXORTALK_COM)
                         .addHeader(X_FORWARDED_PORT_HEADER, "")
                         .build();
+    }
+
+    @Before
+    public void setupS3Mock() {
+        s3Mock = new S3Mock.Builder().withPort(s3MockPort).withInMemoryBackend().build();
+        s3Mock.start();
+        AwsClientBuilder.EndpointConfiguration endpoint = new AwsClientBuilder.EndpointConfiguration("http://localhost:"+s3MockPort, "us-west-2");
+        s3Client = AmazonS3ClientBuilder
+                .standard()
+                .withPathStyleAccessEnabled(true)
+                .withEndpointConfiguration(endpoint)
+                .withCredentials(new AWSStaticCredentialsProvider(new AnonymousAWSCredentials()))
+                .build();
+
+        s3Client.createBucket(ixorTalkConfigProperties.getBucket());
+    }
+
+    @After
+    public void after() {
+        s3Mock.stop();
     }
 
     protected static UriModifyingOperationPreprocessor staticUris() {

@@ -61,6 +61,7 @@ import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.when;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.cloud.netflix.zuul.filters.support.FilterConstants.*;
+import static org.springframework.http.MediaType.IMAGE_PNG_VALUE;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.restassured.RestAssuredRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.restassured.operation.preprocess.RestAssuredPreprocessors.modifyUris;
@@ -115,6 +116,9 @@ public abstract class AbstractSpringIntegrationTest {
 
         originalImageBytes = toByteArray(getClass().getClassLoader().getResourceAsStream("test-images/"+ORIGINAL_IMAGE_FILE_NAME));
         S3Object s3Object = new S3Object();
+        ObjectMetadata objectMetadata = new ObjectMetadata();
+        objectMetadata.setContentType(IMAGE_PNG_VALUE);
+        s3Object.setObjectMetadata(objectMetadata);
         s3Object.setObjectContent(new S3ObjectInputStream(new ByteArrayInputStream(originalImageBytes), null));
         when(awsS3Template.get(ixorTalkConfigProperties.getBucket(), location)).thenReturn(s3Object);
     }

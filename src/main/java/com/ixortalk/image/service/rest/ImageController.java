@@ -56,16 +56,18 @@ public class ImageController {
         String requestAttribute = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
         String key = StringUtils.substringAfterLast(requestAttribute, "image/");
 
-        return
-                ofNullable(awsS3Template.get(ixorTalkConfigProperties.getBucket(), key))
-                        .map(s3Object -> {
-                            try {
-                                return ok(toByteArray(s3Object.getObjectContent()));
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                            return badRequest().build();
-                        })
-                        .orElse(badRequest().build());
+        return ofNullable(awsS3Template)
+                .map(awsS3TemplateObject ->
+                        ofNullable(awsS3TemplateObject.get(ixorTalkConfigProperties.getBucket(), key))
+                                .map(s3Object -> {
+                                    try {
+                                        return ok(toByteArray(s3Object.getObjectContent()));
+                                    } catch (IOException e) {
+                                        throw new IllegalArgumentException("Could not get content from object: " + e.getMessage());
+                                    }
+                                })
+                                .orElse(badRequest().build())
+                )
+                .orElse(badRequest().build());
     }
 }

@@ -25,13 +25,15 @@ package com.ixortalk.image.service.rest;
 
 import com.ixortalk.aws.s3.library.config.AwsS3Template;
 import com.ixortalk.image.service.config.IxorTalkConfigProperties;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.HandlerMapping;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 import static com.google.common.io.ByteStreams.toByteArray;
@@ -49,8 +51,11 @@ public class ImageController {
     @Inject
     private IxorTalkConfigProperties ixorTalkConfigProperties;
 
-    @GetMapping(path = "/image")
-    public ResponseEntity<?> getImage(@RequestParam("path") String key) {
+    @GetMapping(path = "/image/**")
+    public ResponseEntity<?> getImage(HttpServletRequest request) {
+        String requestAttribute = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
+        String key = StringUtils.substringAfterLast(requestAttribute, "image/");
+
         return
                 ofNullable(awsS3Template.get(ixorTalkConfigProperties.getBucket(), key))
                         .map(s3Object -> {

@@ -47,15 +47,12 @@ include::{snippets}/images/get/http-request.adoc[]
 ==== Request Headers
 include::{snippets}/images/get/request-headers.adoc[]
 
-==== Request Parameters
-include::{snippets}/images/get/request-parameters.adoc[]
-
 === Response
 
 Success:
 include::{snippets}/images/get/http-response.adoc[]
 
-With a wrong key:
+With a non-existent key:
 include::{snippets}/images/wrong-key/http-response.adoc[]
 
 When the user has no admin rights:

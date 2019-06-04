@@ -23,20 +23,15 @@
  */
 package com.ixortalk.image.service;
 
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.AnonymousAWSCredentials;
-import com.amazonaws.client.builder.AwsClientBuilder;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ixortalk.aws.s3.library.config.AwsS3Template;
 import com.ixortalk.image.service.config.IxorTalkConfigProperties;
 import com.ixortalk.test.oauth2.OAuth2EmbeddedTestServer;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.builder.RequestSpecBuilder;
-import io.findify.s3mock.S3Mock;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.runner.RunWith;
@@ -55,9 +50,15 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.inject.Inject;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+
 import static com.jayway.restassured.config.ObjectMapperConfig.objectMapperConfig;
 import static com.jayway.restassured.config.RestAssuredConfig.config;
+import static java.util.UUID.randomUUID;
+import static org.apache.commons.io.IOUtils.toByteArray;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.when;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.cloud.netflix.zuul.filters.support.FilterConstants.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
@@ -90,9 +91,10 @@ public abstract class AbstractSpringIntegrationTest {
     @MockBean
     protected AwsS3Template awsS3Template;
 
-    public S3Mock s3Mock;
-    public int s3MockPort = 10901;
-    public AmazonS3 s3Client;
+    public byte[] originalImageBytes;
+    public static final String ORIGINAL_IMAGE_FILE_NAME = "original.png";
+    public static final String TEST_KEY = "the/key";
+    public String location = TEST_KEY + "/" + randomUUID() + "/original";
 
     @Before
     public final void setupRestAssuredAndOrganizationMocking() {
@@ -109,23 +111,12 @@ public abstract class AbstractSpringIntegrationTest {
     }
 
     @Before
-    public void setupS3Mock() {
-        s3Mock = new S3Mock.Builder().withPort(s3MockPort).withInMemoryBackend().build();
-        s3Mock.start();
-        AwsClientBuilder.EndpointConfiguration endpoint = new AwsClientBuilder.EndpointConfiguration("http://localhost:"+s3MockPort, "us-west-2");
-        s3Client = AmazonS3ClientBuilder
-                .standard()
-                .withPathStyleAccessEnabled(true)
-                .withEndpointConfiguration(endpoint)
-                .withCredentials(new AWSStaticCredentialsProvider(new AnonymousAWSCredentials()))
-                .build();
+    public void setupS3Mock() throws IOException {
 
-        s3Client.createBucket(ixorTalkConfigProperties.getBucket());
-    }
-
-    @After
-    public void after() {
-        s3Mock.stop();
+        originalImageBytes = toByteArray(getClass().getClassLoader().getResourceAsStream("test-images/"+ORIGINAL_IMAGE_FILE_NAME));
+        S3Object s3Object = new S3Object();
+        s3Object.setObjectContent(new S3ObjectInputStream(new ByteArrayInputStream(originalImageBytes), null));
+        when(awsS3Template.get(ixorTalkConfigProperties.getBucket(), location)).thenReturn(s3Object);
     }
 
     protected static UriModifyingOperationPreprocessor staticUris() {

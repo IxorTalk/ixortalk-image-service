@@ -24,12 +24,8 @@
 package com.ixortalk.image.service.rest;
 
 import com.ixortalk.image.service.AbstractSpringIntegrationTest;
-import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
-import org.springframework.restdocs.request.RequestParametersSnippet;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -37,54 +33,30 @@ import static com.ixortalk.test.oauth2.OAuth2TestTokens.adminToken;
 import static com.ixortalk.test.oauth2.OAuth2TestTokens.userToken;
 import static com.jayway.restassured.RestAssured.given;
 import static java.net.HttpURLConnection.*;
-import static java.util.UUID.randomUUID;
 import static org.apache.commons.io.IOUtils.toByteArray;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.restdocs.restassured.RestAssuredRestDocumentation.document;
 
 public class ImageController_GetImage_IntegrationAndRestDocTest extends AbstractSpringIntegrationTest {
 
-    private static final String TEST_KEY = "the/key";
-    private String location = TEST_KEY + "/" + randomUUID() + "/original";
-    private byte[] originalImageBytes;
-
-    private final String FILE_NAME = "test-images/original.png";
-    private final String path = "src/test/resources";
-
-    private RequestParametersSnippet REQUEST_PARAMETERS = requestParameters(
-            parameterWithName("path").description("The actual path to the stored original image")
-    );
-
-    @Before
-    public void before() throws IOException {
-        originalImageBytes = toByteArray(getClass().getClassLoader().getResourceAsStream(FILE_NAME));
-
-        s3Client.putObject(ixorTalkConfigProperties.getBucket(), location, new File(path +"/" + FILE_NAME));
-        Mockito.when(awsS3Template.get(ixorTalkConfigProperties.getBucket(), location))
-                .thenReturn(s3Client.getObject(ixorTalkConfigProperties.getBucket(), location));
-    }
-
     @Test
     public void success() throws IOException {
+
         InputStream inputStream = given()
                 .auth().preemptive().oauth2(adminToken().getValue())
                 .filter(
                         document("images/get",
                                 preprocessRequest(staticUris(), prettyPrint()),
                                 preprocessResponse(prettyPrint(), removeBinaryContent()),
-                                requestHeaders(describeAuthorizationTokenHeader()),
-                                REQUEST_PARAMETERS
+                                requestHeaders(describeAuthorizationTokenHeader())
                         )
                 )
                 .when()
-                .get("/image?path=" + location)
+                .get("/image/"+ location)
                 .then()
                 .statusCode(HTTP_OK).extract().asInputStream();
 
@@ -107,11 +79,10 @@ public class ImageController_GetImage_IntegrationAndRestDocTest extends Abstract
                         document("images/wrong-key",
                                 preprocessRequest(staticUris(), prettyPrint()),
                                 preprocessResponse(prettyPrint()),
-                                requestHeaders(describeAuthorizationTokenHeader()),
-                                REQUEST_PARAMETERS
+                                requestHeaders(describeAuthorizationTokenHeader())
                         )
                 )
-                .get("/image?path=" + location + location)
+                .get("/image/" + location + location)
                 .then()
                 .statusCode(HTTP_BAD_REQUEST);
     }
@@ -124,12 +95,11 @@ public class ImageController_GetImage_IntegrationAndRestDocTest extends Abstract
                         document("images/as-user",
                                 preprocessRequest(staticUris(), prettyPrint()),
                                 preprocessResponse(prettyPrint()),
-                                requestHeaders(describeAuthorizationTokenHeader()),
-                                REQUEST_PARAMETERS
+                                requestHeaders(describeAuthorizationTokenHeader())
                         )
                 )
                 .when()
-                .get("/image?path=" + location)
+                .get("/image/"+ location)
                 .then()
                 .statusCode(HTTP_FORBIDDEN);
     }

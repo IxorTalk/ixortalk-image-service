@@ -24,7 +24,6 @@
 package com.ixortalk.image.service.rest;
 
 import com.ixortalk.image.service.AbstractSpringIntegrationTest;
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -51,19 +50,12 @@ import static org.springframework.restdocs.restassured.RestAssuredRestDocumentat
 
 public class UploadImageController_Upload_IntegrationAndRestDocTest extends AbstractSpringIntegrationTest {
 
-    private static final String TEST_KEY = "the/key";
+
     private static final String ORIGINAL_IMAGE_CONTENT_TYPE = IMAGE_PNG_VALUE;
-    private static final String ORIGINAL_IMAGE_FILE_NAME = "original.png";
 
     private static final String FILE_REQUEST_PART_NAME = "file";
     private static final String KEY_REQUEST_PART_NAME = "key";
 
-    private byte[] originalImageBytes;
-
-    @Before
-    public void before() throws IOException {
-        originalImageBytes = toByteArray(getClass().getClassLoader().getResourceAsStream("test-images/original.png"));
-    }
 
     @Test
     public void success() throws IOException {

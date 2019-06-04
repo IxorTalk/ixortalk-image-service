@@ -28,22 +28,36 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 import static java.util.UUID.randomUUID;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.*;
 
 @ControllerAdvice(basePackageClasses = {ImageServiceApplication.class})
 public class GenericExceptionHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GenericExceptionHandler.class);
 
-    @ExceptionHandler(value = {IllegalArgumentException.class, MethodArgumentNotValidException.class})
+    @ExceptionHandler(value = {IllegalArgumentException.class, MethodArgumentNotValidException.class, MissingServletRequestPartException.class})
     public ResponseEntity handleBadRequests(Exception e) {
         String errorUUID = logError(e);
         return new ResponseEntity("Invalid request - " + errorUUID, new HttpHeaders(), BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = AccessDeniedException.class)
+    public ResponseEntity handleAccessDeniedException(Exception e) {
+        String errorUUID = logError(e);
+        return new ResponseEntity("Access denied - " + errorUUID, new HttpHeaders(), FORBIDDEN);
+    }
+
+    @ExceptionHandler(value = Exception.class)
+    public ResponseEntity handleException(Exception e) {
+        String errorUUID = logError(e);
+        return new ResponseEntity("Internal Server Error - " + errorUUID, new HttpHeaders(), INTERNAL_SERVER_ERROR);
     }
 
     public static String logError(Exception e) {

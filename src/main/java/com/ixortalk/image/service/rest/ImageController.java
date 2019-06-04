@@ -23,7 +23,6 @@
  */
 package com.ixortalk.image.service.rest;
 
-import com.amazonaws.services.s3.model.S3Object;
 import com.ixortalk.aws.s3.library.config.AwsS3Template;
 import com.ixortalk.image.service.config.IxorTalkConfigProperties;
 import org.apache.commons.lang.StringUtils;
@@ -38,7 +37,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 import static com.google.common.io.ByteStreams.toByteArray;
+import static java.util.Optional.ofNullable;
 import static org.springframework.http.MediaType.valueOf;
+import static org.springframework.http.ResponseEntity.badRequest;
 import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
@@ -56,13 +57,16 @@ public class ImageController {
         String requestAttribute = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
         String key = StringUtils.substringAfterLast(requestAttribute, "image/");
 
-        try {
-            S3Object s3Object = awsS3Template.get(ixorTalkConfigProperties.getBucket(), key);
-            return ok()
-                    .contentType(valueOf(s3Object.getObjectMetadata().getContentType()))
-                    .body(toByteArray(s3Object.getObjectContent()));
-        } catch (IOException | NullPointerException e) {
-            throw new IllegalArgumentException("Could not get key " + key + " from S3: " + e.getMessage(), e);
-        }
+        return ofNullable(awsS3Template.get(ixorTalkConfigProperties.getBucket(), key))
+                .map(s3Object -> {
+                    try {
+                        return ok()
+                                .contentType(valueOf(s3Object.getObjectMetadata().getContentType()))
+                                .body(toByteArray(s3Object.getObjectContent()));
+                    } catch (IOException e) {
+                        throw new IllegalArgumentException("Could not get key " + key + " from S3: " + e.getMessage(), e);
+                    }
+                })
+                .orElse(badRequest().build());
     }
 }

@@ -23,6 +23,8 @@
 #
 
 spring:
+  profiles:
+    active: dev
   application:
     name: ixortalk.image.service
   cloud:

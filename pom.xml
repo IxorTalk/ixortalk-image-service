@@ -51,7 +51,7 @@
         <prometheus.simpleclient.version>0.0.22</prometheus.simpleclient.version>
         <ixortalk-test.version>1.0.3</ixortalk-test.version>
         <ixortalk-util.version>1.0.2</ixortalk-util.version>
-        <ixortalk-aws-s3-library.version>1.0.2</ixortalk-aws-s3-library.version>
+        <ixortalk-aws-s3-library.version>1.1.0</ixortalk-aws-s3-library.version>
     </properties>
 
     <organization>

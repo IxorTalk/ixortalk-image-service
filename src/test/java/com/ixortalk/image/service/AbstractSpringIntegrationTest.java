@@ -24,6 +24,8 @@
 package com.ixortalk.image.service;
 
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ixortalk.aws.s3.library.config.AwsS3Template;
 import com.ixortalk.image.service.config.IxorTalkConfigProperties;
@@ -48,11 +50,18 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.inject.Inject;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+
 import static com.jayway.restassured.config.ObjectMapperConfig.objectMapperConfig;
 import static com.jayway.restassured.config.RestAssuredConfig.config;
+import static java.util.UUID.randomUUID;
+import static org.apache.commons.io.IOUtils.toByteArray;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.when;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.cloud.netflix.zuul.filters.support.FilterConstants.*;
+import static org.springframework.http.MediaType.IMAGE_PNG_VALUE;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.restassured.RestAssuredRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.restassured.operation.preprocess.RestAssuredPreprocessors.modifyUris;
@@ -83,6 +92,11 @@ public abstract class AbstractSpringIntegrationTest {
     @MockBean
     protected AwsS3Template awsS3Template;
 
+    public byte[] originalImageBytes;
+    public static final String ORIGINAL_IMAGE_FILE_NAME = "original.png";
+    public static final String TEST_KEY = "the/key";
+    public String location = TEST_KEY + "/" + randomUUID() + "/original";
+
     @Before
     public final void setupRestAssuredAndOrganizationMocking() {
         RestAssured.port = port;
@@ -95,6 +109,18 @@ public abstract class AbstractSpringIntegrationTest {
                         .addHeader(X_FORWARDED_HOST_HEADER, HOST_IXORTALK_COM)
                         .addHeader(X_FORWARDED_PORT_HEADER, "")
                         .build();
+    }
+
+    @Before
+    public void setupS3Mock() throws IOException {
+
+        originalImageBytes = toByteArray(getClass().getClassLoader().getResourceAsStream("test-images/"+ORIGINAL_IMAGE_FILE_NAME));
+        S3Object s3Object = new S3Object();
+        ObjectMetadata objectMetadata = new ObjectMetadata();
+        objectMetadata.setContentType(IMAGE_PNG_VALUE);
+        s3Object.setObjectMetadata(objectMetadata);
+        s3Object.setObjectContent(new S3ObjectInputStream(new ByteArrayInputStream(originalImageBytes), null));
+        when(awsS3Template.get(ixorTalkConfigProperties.getBucket(), location)).thenReturn(s3Object);
     }
 
     protected static UriModifyingOperationPreprocessor staticUris() {

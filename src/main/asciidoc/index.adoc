@@ -32,6 +32,33 @@ include::{snippets}/images/upload/http-response.adoc[]
 ==== Response Headers
 include::{snippets}/images/upload/response-headers.adoc[]
 
+== Download
+
+Downloading images
+
+=== Request
+
+Via curl:
+include::{snippets}/images/get/curl-request.adoc[]
+
+HTTP request:
+include::{snippets}/images/get/http-request.adoc[]
+
+==== Request Headers
+include::{snippets}/images/get/request-headers.adoc[]
+
+=== Response
+
+Success:
+include::{snippets}/images/get/http-response.adoc[]
+
+With a non-existent key:
+include::{snippets}/images/wrong-key/http-response.adoc[]
+
+When the user has no admin rights:
+include::{snippets}/images/as-user/http-response.adoc[]
+
+
 
 
 

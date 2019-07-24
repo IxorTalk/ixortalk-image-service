@@ -51,7 +51,7 @@ public class UploadImageController {
     @Inject
     private IxorTalkConfigProperties ixorTalkConfigProperties;
 
-    @PostMapping(path = "/images")
+    @PostMapping(path = "/upload")
     public ResponseEntity<?> uploadImage(@RequestPart("file") MultipartFile multipartFile,
                                          @RequestPart("key") String key) throws URISyntaxException, IOException {
         String location = key + "/" + randomUUID() + "/original";

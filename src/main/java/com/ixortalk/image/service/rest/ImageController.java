@@ -52,10 +52,10 @@ public class ImageController {
     @Inject
     private IxorTalkConfigProperties ixorTalkConfigProperties;
 
-    @GetMapping(path = "/image/**")
+    @GetMapping(path = "/download/**")
     public ResponseEntity<?> getImage(HttpServletRequest request) {
         String requestAttribute = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
-        String key = StringUtils.substringAfterLast(requestAttribute, "image/");
+        String key = StringUtils.substringAfterLast(requestAttribute, "download/");
 
         return ofNullable(awsS3Template.get(ixorTalkConfigProperties.getBucket(), key))
                 .map(s3Object -> {

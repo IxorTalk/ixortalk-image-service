@@ -57,7 +57,7 @@ public class ImageController_GetImage_IntegrationAndRestDocTest extends Abstract
                         )
                 )
                 .when()
-                .get("/image/"+ location)
+                .get("/download/"+ location)
                 .then()
                 .statusCode(HTTP_OK).extract().asInputStream();
 
@@ -83,7 +83,7 @@ public class ImageController_GetImage_IntegrationAndRestDocTest extends Abstract
                                 requestHeaders(describeAuthorizationTokenHeader())
                         )
                 )
-                .get("/image/" + location + location)
+                .get("/download/" + location + location)
                 .then()
                 .statusCode(HTTP_BAD_REQUEST);
     }
@@ -100,7 +100,7 @@ public class ImageController_GetImage_IntegrationAndRestDocTest extends Abstract
                         )
                 )
                 .when()
-                .get("/image/"+ location)
+                .get("/download/"+ location)
                 .then()
                 .statusCode(HTTP_FORBIDDEN);
     }
@@ -112,7 +112,7 @@ public class ImageController_GetImage_IntegrationAndRestDocTest extends Abstract
         given()
                 .auth().preemptive().oauth2(adminToken().getValue())
                 .when()
-                .get("/image/"+ location)
+                .get("/download/"+ location)
                 .then()
                 .statusCode(HTTP_BAD_REQUEST);
     }

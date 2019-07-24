@@ -23,7 +23,7 @@
 #
 
 server:
-  context-path: /image-service
+  context-path: /image
 
 ixortalk:
   image-service:

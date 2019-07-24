@@ -77,7 +77,7 @@ public class UploadImageController_Upload_IntegrationAndRestDocTest extends Abst
                         .contentType(MULTIPART_FORM_DATA)
                         .multiPart(FILE_REQUEST_PART_NAME, ORIGINAL_IMAGE_FILE_NAME, originalImageBytes, ORIGINAL_IMAGE_CONTENT_TYPE)
                         .multiPart(KEY_REQUEST_PART_NAME, TEST_KEY, TEXT_PLAIN_VALUE)
-                        .post("/images")
+                        .post("/upload")
                         .then()
                         .statusCode(HTTP_CREATED)
                         .extract().header(LOCATION);
@@ -102,7 +102,7 @@ public class UploadImageController_Upload_IntegrationAndRestDocTest extends Abst
                 .auth().preemptive().oauth2(adminToken().getValue())
                 .contentType(MULTIPART_FORM_DATA)
                 .multiPart(KEY_REQUEST_PART_NAME, TEST_KEY, TEXT_PLAIN_VALUE)
-                .post("/images")
+                .post("/upload")
                 .then()
                 .statusCode(HTTP_BAD_REQUEST);
 
@@ -115,7 +115,7 @@ public class UploadImageController_Upload_IntegrationAndRestDocTest extends Abst
                 .auth().preemptive().oauth2(adminToken().getValue())
                 .contentType(MULTIPART_FORM_DATA)
                 .multiPart(FILE_REQUEST_PART_NAME, ORIGINAL_IMAGE_FILE_NAME, originalImageBytes, ORIGINAL_IMAGE_CONTENT_TYPE)
-                .post("/images")
+                .post("/upload")
                 .then()
                 .statusCode(HTTP_BAD_REQUEST);
 
@@ -129,7 +129,7 @@ public class UploadImageController_Upload_IntegrationAndRestDocTest extends Abst
                 .contentType(MULTIPART_FORM_DATA)
                 .multiPart(FILE_REQUEST_PART_NAME, ORIGINAL_IMAGE_FILE_NAME, originalImageBytes, ORIGINAL_IMAGE_CONTENT_TYPE)
                 .multiPart(KEY_REQUEST_PART_NAME, TEST_KEY, TEXT_PLAIN_VALUE)
-                .post("/images")
+                .post("/upload")
                 .then()
                 .statusCode(HTTP_FORBIDDEN);
     }

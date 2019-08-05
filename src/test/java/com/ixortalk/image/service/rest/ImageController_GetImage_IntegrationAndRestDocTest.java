@@ -102,7 +102,7 @@ public class ImageController_GetImage_IntegrationAndRestDocTest extends Abstract
                 .when()
                 .get("/download/"+ location)
                 .then()
-                .statusCode(HTTP_FORBIDDEN);
+                .statusCode(HTTP_OK);
     }
 
     @Test

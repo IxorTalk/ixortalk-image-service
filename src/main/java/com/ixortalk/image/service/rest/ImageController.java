@@ -27,7 +27,6 @@ import com.ixortalk.aws.s3.library.config.AwsS3Template;
 import com.ixortalk.image.service.config.IxorTalkConfigProperties;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.HandlerMapping;
@@ -43,7 +42,6 @@ import static org.springframework.http.ResponseEntity.badRequest;
 import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
-@PreAuthorize("hasRole('ADMIN')")
 public class ImageController {
 
     @Inject

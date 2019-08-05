@@ -116,4 +116,19 @@ public class ImageController_GetImage_IntegrationAndRestDocTest extends Abstract
                 .then()
                 .statusCode(HTTP_BAD_REQUEST);
     }
+
+    @Test
+    public void noBearerToken() {
+        given()
+                .filter(
+                        document("images/no-token",
+                                preprocessRequest(staticUris(), prettyPrint()),
+                                preprocessResponse(prettyPrint())
+                        )
+                )
+                .when()
+                .get("/download/"+ location)
+                .then()
+                .statusCode(HTTP_OK);
+    }
 }

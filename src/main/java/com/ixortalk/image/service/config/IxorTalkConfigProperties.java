@@ -29,6 +29,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class IxorTalkConfigProperties {
 
     private String bucket;
+    protected static final String DOWNLOAD_PATH = "/download";
 
     public String getBucket() {
         return bucket;

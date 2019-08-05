@@ -58,6 +58,9 @@ include::{snippets}/images/wrong-key/http-response.adoc[]
 When the user has no admin rights:
 include::{snippets}/images/as-user/http-response.adoc[]
 
+When the request has no bearer token:
+include::{snippets}/images/no-token/http-response.adoc[]
+
 
 
 

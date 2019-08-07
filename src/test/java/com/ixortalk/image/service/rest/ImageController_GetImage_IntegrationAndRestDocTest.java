@@ -26,7 +26,6 @@ package com.ixortalk.image.service.rest;
 import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.ixortalk.image.service.AbstractSpringIntegrationTest;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -108,18 +107,6 @@ public class ImageController_GetImage_IntegrationAndRestDocTest extends Abstract
                 .get("/download/"+ location)
                 .then()
                 .statusCode(HTTP_OK);
-    }
-
-    @Test
-    public void s3TemplateReturnsError() {
-        Mockito.reset(awsS3Template);
-
-        given()
-                .auth().preemptive().oauth2(adminToken().getValue())
-                .when()
-                .get("/download/"+ location)
-                .then()
-                .statusCode(HTTP_BAD_REQUEST);
     }
 
     @Test

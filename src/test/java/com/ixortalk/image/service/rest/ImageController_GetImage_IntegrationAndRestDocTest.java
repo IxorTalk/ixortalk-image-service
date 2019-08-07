@@ -23,9 +23,9 @@
  */
 package com.ixortalk.image.service.rest;
 
+import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.ixortalk.image.service.AbstractSpringIntegrationTest;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -73,6 +73,10 @@ public class ImageController_GetImage_IntegrationAndRestDocTest extends Abstract
 
     @Test
     public void wrongKey() {
+        AmazonS3Exception amazonS3Exception = new AmazonS3Exception("The provided key does not exist.");
+        amazonS3Exception.setStatusCode(404);
+        when(awsS3Template.get(ixorTalkConfigProperties.getBucket(), location)).thenThrow(amazonS3Exception);
+
         given()
                 .auth().preemptive().oauth2(adminToken().getValue())
                 .when()
@@ -83,9 +87,9 @@ public class ImageController_GetImage_IntegrationAndRestDocTest extends Abstract
                                 requestHeaders(describeAuthorizationTokenHeader())
                         )
                 )
-                .get("/download/" + location + location)
+                .get("/download/" + location)
                 .then()
-                .statusCode(HTTP_BAD_REQUEST);
+                .statusCode(HTTP_NOT_FOUND);
     }
 
     @Test
@@ -103,18 +107,6 @@ public class ImageController_GetImage_IntegrationAndRestDocTest extends Abstract
                 .get("/download/"+ location)
                 .then()
                 .statusCode(HTTP_OK);
-    }
-
-    @Test
-    public void s3TemplateReturnsError() {
-        Mockito.reset(awsS3Template);
-
-        given()
-                .auth().preemptive().oauth2(adminToken().getValue())
-                .when()
-                .get("/download/"+ location)
-                .then()
-                .statusCode(HTTP_BAD_REQUEST);
     }
 
     @Test

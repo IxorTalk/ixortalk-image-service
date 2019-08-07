@@ -23,10 +23,12 @@
  */
 package com.ixortalk.image.service.rest.exception;
 
+import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.ixortalk.image.service.ImageServiceApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -58,6 +60,12 @@ public class GenericExceptionHandler {
     public ResponseEntity handleException(Exception e) {
         String errorUUID = logError(e);
         return new ResponseEntity("Internal Server Error - " + errorUUID, new HttpHeaders(), INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(value = AmazonS3Exception.class)
+    public ResponseEntity handleAmazonS3Exception(AmazonS3Exception e) {
+        String errorUUID = logError(e);
+        return new ResponseEntity("Amazon S3 Error - " + errorUUID, new HttpHeaders(), HttpStatus.valueOf(e.getStatusCode()));
     }
 
     public static String logError(Exception e) {

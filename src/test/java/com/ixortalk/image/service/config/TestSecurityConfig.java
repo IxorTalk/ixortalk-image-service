@@ -23,22 +23,28 @@
  */
 package com.ixortalk.image.service.config;
 
+import com.auth0.spring.security.api.JwtWebSecurityConfigurer;
+import com.ixortalk.test.oauth2.Auth0TestAuthenticationProvider;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
-import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
+import org.springframework.context.annotation.Primary;
 
-import static com.ixortalk.image.service.config.IxorTalkConfigProperties.DOWNLOAD_PATH;
+import static java.lang.String.format;
 
 @Configuration
-@EnableResourceServer
-public class ResourceServer extends ResourceServerConfigurerAdapter {
+public class TestSecurityConfig {
 
-    @Override
-    public void configure(HttpSecurity http) throws Exception {
-        http
-                .authorizeRequests()
-                .antMatchers(DOWNLOAD_PATH + "/**").permitAll()
-                .anyRequest().authenticated();
+    @Value(value = "${security.oauth2.resource.id}")
+    private String audience;
+
+    @Value(value = "${ixortalk.auth0.domain}")
+    private String auth0Domain;
+
+    @Bean
+    @Primary
+    public JwtWebSecurityConfigurer testJwtWebSecurityConfigurer() {
+        return JwtWebSecurityConfigurer
+                .forRS256(audience, format("https://%s/", auth0Domain), new Auth0TestAuthenticationProvider());
     }
 }

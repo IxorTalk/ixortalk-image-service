@@ -29,10 +29,16 @@ ixortalk:
   image-service:
     bucket: configured-image-bucket
 
+  auth0:
+    domain: ixortalk-auth0-test-domain.com
+
 logging:
   org:
     springframework:
       security: DEBUG
 
 security:
+  oauth2:
+    resource:
+      id: configured-resource-id
   ignored: "/css/**, /js/**, /webjars/**, /**/favicon.ico"

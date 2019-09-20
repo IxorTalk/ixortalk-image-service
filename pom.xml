@@ -52,7 +52,7 @@
         <ixortalk-test.version>1.0.3</ixortalk-test.version>
         <ixortalk-util.version>1.0.2</ixortalk-util.version>
         <ixortalk-aws-s3-library.version>1.1.0</ixortalk-aws-s3-library.version>
-        <ixortalk-oauth2-spring-boot-starter.version>0.0.1-SNAPSHOT</ixortalk-oauth2-spring-boot-starter.version>
+        <ixortalk-oauth2-spring-boot-starter.version>0.0.1</ixortalk-oauth2-spring-boot-starter.version>
     </properties>
 
     <organization>

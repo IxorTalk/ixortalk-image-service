@@ -52,6 +52,7 @@
         <ixortalk-test.version>1.0.3</ixortalk-test.version>
         <ixortalk-util.version>1.0.2</ixortalk-util.version>
         <ixortalk-aws-s3-library.version>1.1.0</ixortalk-aws-s3-library.version>
+        <ixortalk-oauth2-spring-boot-starter.version>0.0.2</ixortalk-oauth2-spring-boot-starter.version>
     </properties>
 
     <organization>
@@ -170,12 +171,11 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-feign</artifactId>
         </dependency>
-
         <dependency>
-            <groupId>org.springframework.security.oauth</groupId>
-            <artifactId>spring-security-oauth2</artifactId>
+            <groupId>com.ixortalk</groupId>
+            <artifactId>ixortalk-oauth2-spring-boot-starter</artifactId>
+            <version>${ixortalk-oauth2-spring-boot-starter.version}</version>
         </dependency>
-
         <dependency>
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>

@@ -23,16 +23,14 @@
  */
 package com.ixortalk.image.service.config;
 
+import com.ixortalk.autoconfigure.oauth2.IxorTalkHttpSecurityConfigurer;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
-import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 
 import static com.ixortalk.image.service.config.IxorTalkConfigProperties.DOWNLOAD_PATH;
 
 @Configuration
-@EnableResourceServer
-public class ResourceServer extends ResourceServerConfigurerAdapter {
+public class SecurityConfig implements IxorTalkHttpSecurityConfigurer {
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
